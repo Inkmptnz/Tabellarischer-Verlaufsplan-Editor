@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
 function initLernzieleLogic(lernzieleSection) {
     const dom = {
         container: lernzieleSection.querySelector('.lernziele-container'),
@@ -56,7 +55,7 @@ function initTableLogic(tableElement) {
 
 
     new Sortable(dom.tableBody, {
-        animation: 150, // ms
+        animation: 150,
         swapThreshold: 0.2,
         handle: '.drag-handle',
         ghostClass: 'sortable-ghost',
@@ -188,7 +187,7 @@ const handleAddLernziel = (lernziele_list) => {
 const handleLernzieleClick = (event) => {
     const deleteButton = event.target.closest('.lernziel-loeschen-btn');
     if (!deleteButton) {
-        return; // Klick war nicht auf einem Löschen-Button
+        return;
     }
 
     const itemToDelete = deleteButton.closest('li');
@@ -252,43 +251,3 @@ const handleTableClick = (event) => {
         rowToDelete.remove();
     }
 };
-
-// const handleTableClick = (event) => {
-//  PhaseRow = () => {
-//     const row = document.createElement('tr');
-//     row.innerHTML = `
-//             <td class="col-drag drag-handle-cell">
-//                 <button type="button" class="action-btn drag-handle" title="Zeile verschieben">
-//                     <i data-lucide="grip-vertical" draggable="false"></i>
-//                 </button>
-//             </td>
-//             <td class="col-uhr clock-cell"></td>
-//             <td class="col-dauer">
-//                 <input type="number" placeholder="0" class="cell-input dauer-input" min="0">
-//             </td>
-//             <td class="col-phase">
-//                 <input type="text" placeholder="Phase wählen" class="cell-input phase-input">
-//             </td>
-//             <td class="col-handlung">
-//                 <div contenteditable="true" role="textbox" aria-multiline="true" class="cell-input handlung-textarea" data-placeholder="Handlung beschreiben..."></div>
-//             </td>
-//             <td class="col-methode">
-//                 <input type="text" list="methoden-liste" placeholder="Methode wählen" class="cell-input methode-input">
-//             </td>
-//             <td class="col-mittel">
-//                 <input type="text" list="mittel-liste" placeholder="Mittel wählen" class="cell-input mittel-input">
-//             </td>
-//             <td class="col-bemerkung">
-//                 <div contenteditable="true" role="textbox" aria-multiline="true" class="cell-input bemerkung-textarea" data-placeholder="Bemerkung..."></div>
-//             </td>
-//             <td class="col-delete delete-cell">
-//                 <button type="button" class="action-btn zeile-loeschen-btn danger-btn" title="Zeile löschen">
-//                     <i data-lucide="trash-2"></i>
-//                 </button>
-//             </td>
-//         `;
-//     return row;
-// };
-
-
-
