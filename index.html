@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verlaufsplan Editor</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <main class="plan-editor">
+
+        <header class="plan-header">
+            <input type="text" class="header-input" placeholder="Schulname">
+            <input type="date" class="header-input">
+            <input type="time" id="start-time-input" class="header-input" value="11:45">
+            <input type="text" class="header-input" placeholder="Lehrername">
+        </header>
+
+        <section class="lernziele-section">
+            <div class="topic-container">
+                <h1 id="thema-input" class="thema-input" contenteditable="true" role="textbox">Stundenthema</h1>
+            </div>
+
+            <div class="lernziele-container">
+                <h2>Lernziele:</h2>
+                <ul>
+                    
+                </ul>
+                <button type="button" class="action-btn lernziel-hinzufuegen-btn">
+                    <i data-lucide="plus"></i>
+                    <span class="lernziel-hinzufuegen-span">Neues Lernziel</span>
+                </button>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <div class="main-actions">
+                <button type="button" class="action-btn phase-hinzufuegen-btn primary-action">
+                    <i data-lucide="plus"></i>
+                    <span>Neue Phase</span>
+                </button>
+                <button type="button" class="action-btn save-btn">
+                    <i data-lucide="save"></i>
+                    <span>Speichern</span>
+                </button>
+                <button type="button" class="action-btn print-btn">
+                    <i data-lucide="printer"></i>
+                    <span>Drucken</span>
+                </button>
+            </div>
+            <div class="time-controls">
+                <div class="input-group">
+                    <label for="gesamtdauer-input">Dauer:</label>
+                    <input type="number" id="gesamtdauer-input" list="dauer-presets" class="gesamtdauer-input"
+                        value="45" min="1" title="Gesamtdauer der Stunde in Minuten">
+                    <span>Min</span>
+                </div>
+                <div class="time-summary">
+                    Verbleibend: <span id="restzeit-output">45</span> Min
+                </div>
+            </div>
+        </div>
+
+        <table class="plan-table">
+            <thead>
+                <tr>
+                    <th class="col-drag"></th>
+                    <th class="col-uhr">Uhr</th>
+                    <th class="col-dauer">Zeit</th>
+                    <th class="col-phase">Phase</th>
+                    <th class="col-handlung">Handlung</th>
+                    <th class="col-methode">Methode</th>
+                    <th class="col-mittel">Mittel</th>
+                    <th class="col-bemerkung">Bemerkung</th>
+                    <th class="col-delete"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <td class="col-drag drag-handle-cell">
+                    <button type="button" class="action-btn drag-handle" title="Zeile verschieben">
+                        <i data-lucide="grip-vertical" draggable="false"></i>
+                    </button>
+                </td>
+
+                <td class="col-uhr clock-cell"></td>
+                
+                <td class="col-dauer">
+                    <input type="number" placeholder="0" class="cell-input dauer-input" min="0">
+                </td>
+                <td class="col-phase">
+                    <input type="text" placeholder="Phase wählen" class="cell-input phase-input">
+                </td>
+                <td class="col-handlung">
+                    <div contenteditable="true" role="textbox" aria-multiline="true" class="cell-input handlung-textarea" data-placeholder="Handlung beschreiben..."></div>
+                </td>
+                <td class="col-methode">
+                    <input type="text" list="methoden-liste" placeholder="Methode wählen" class="cell-input methode-input">
+                </td>
+                <td class="col-mittel">
+                    <input type="text" list="mittel-liste" placeholder="Mittel wählen" class="cell-input mittel-input">
+                </td>
+                <td class="col-bemerkung">
+                    <div contenteditable="true" role="textbox" aria-multiline="true" class="cell-input bemerkung-textarea" data-placeholder="Bemerkung..."></div>
+                </td>
+                <td class="col-delete delete-cell">
+                    <button type="button" class="action-btn zeile-loeschen-btn danger-btn" title="Zeile löschen">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </td>
+                </tbody>
+        </table>
+
+    </main>
+
+    <datalist id="dauer-presets">
+        <option value="45"></option>
+        <option value="90"></option>
+    </datalist>
+
+    <datalist id="methoden-liste">
+        <option value="Lehrervortrag"></option>
+        <option value="Stillarbeit"></option>
+        <option value="Partnerarbeit"></option>
+        <option value="Gruppenarbeit"></option>
+        <option value="Experiment"></option>
+        <option value="Präsentation"></option>
+    </datalist>
+
+    <datalist id="mittel-liste">
+        <option value="Arbeitsblatt"></option>
+        <option value="Präsentation"></option>
+        <option value="Beamer"></option>
+        <option value="Smartphone"></option>
+        <option value="Plickerskarten"></option>
+        <option value="Tafel"></option>
+    </datalist>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
+    <script src="script.js"></script>
+
+    <script>
+        lucide.createIcons();
+    </script>
+
+</body>
+
+</html>
