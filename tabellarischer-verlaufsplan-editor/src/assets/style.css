@@ -1,0 +1,369 @@
+:root {
+    --bg-color: #121212;
+    --surface-color: #1e1e1e;
+    --accent-color: #3b82f6;
+    --text-primary: #e0e0e0;
+    --text-secondary: #888888;
+    --border-color: #333333;
+    --danger-color: #ef4444;
+    --accent-color-hover: #2a2a2a; 
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.plan-editor {
+    max-width: 100%;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+input[type="text"]:not(.thema-input),
+input[type="date"],
+input[type="time"],
+input[type="number"],
+textarea {
+    background-color: var(--surface-color);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.5rem 0.75rem;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.2s ease-in-out;
+}
+
+input:focus,
+textarea:focus,
+input[type="text"]:focus,
+input:hover,
+input[type="text"]:hover {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+input:focus::placeholder {
+  color: transparent;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 60px;
+}
+
+.plan-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.header-input {
+    flex: 1;
+    min-width: 200px;
+}
+
+.lernziele-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.topic-container {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.thema-input {
+    display: inline-block;
+    width: fit-content;
+    min-width: 25%;
+    max-width: 50%;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    background-color: var(--surface-color);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    padding: 0.75rem;
+}
+
+.thema-input:hover {
+    background-color: var(--surface-color);
+    outline: 2px solid var(--accent-color);
+}
+
+.thema-input:focus {
+    outline: 2px solid var(--accent-color);
+    background-color: var(--surface-color);
+}
+
+.lernziele-container {
+    margin-top: 1.5rem;
+}
+
+.lernziele-container h2 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.lernziele-container ul {
+    padding-left: 1.5rem;
+}
+
+.lernziele-container li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.5rem;
+}
+
+.lernziel-hinzufuegen-btn {
+    margin-top: 1rem;
+    width: 100%;
+    outline: 2px solid var(--accent-color);
+    opacity: 30%;
+}
+
+.lernziel-hinzufuegen-btn:hover {
+    opacity: 100%;
+}
+
+.action-btn {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid transparent;
+    border-radius: 50px;
+    padding: 0.5rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.action-btn:hover {
+    background-color: #2e2e2e;
+    border-color: var(--accent-color-hover);
+}
+
+.action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.time-controls,
+.main-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.action-bar .input-group {
+    gap: 0.5rem;
+}
+
+.action-bar .gesamtdauer-input {
+    width: 60px;
+}
+
+.time-summary {
+    color: var(--text-secondary);
+}
+
+.primary-action {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: white;
+}
+
+.primary-action:hover {
+    background-color: #2563eb;
+}
+
+.plan-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-top: 1rem;
+}
+
+.plan-table th {
+    background-color: var(--surface-color);
+    padding: 0.75rem 1rem;
+    text-align: center;
+    font-weight: 500;
+    color: var(--text-secondary);
+    vertical-align: middle;
+}
+
+.plan-table td {
+    padding: 0.5rem 0.25rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.plan-table tbody tr:nth-child(even) td {
+    background-color: rgba(15, 15, 15, 0.5);
+}
+
+.plan-table .cell-input,
+.plan-table .handlung-textarea,
+.plan-table .bemerkung-textarea {
+    width: 100%;
+    background-color: var(--surface-color);
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    padding: 0.25rem;
+    margin: -0.25rem;
+}
+
+.plan-table .cell-input:focus,
+.plan-table .handlung-textarea:focus,
+.plan-table .bemerkung-textarea:focus {
+    background-color: var(--bg-color);
+
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.plan-table .col-handlung,
+.plan-table .col-bemerkung {
+    padding: 1em;
+    outline: none;
+}
+
+.col-drag,
+.col-delete {
+    width: 4%;
+    text-align: center;
+}
+
+.drag-handle-cell,
+.delete-cell {
+    vertical-align: middle;
+}
+
+.col-uhr {
+    width: 7%;
+    text-align: center;
+}
+
+.col-dauer {
+    width: 6%;
+}
+
+.col-phase {
+    width: 15%;
+}
+
+.dauer-input {
+    text-align: center;
+}
+.col-methode {
+    width: 12%;
+}
+
+.col-mittel {
+    width: 12%;
+}
+
+.col-bemerkung {
+    width: 15%;
+}
+
+
+.grabbing * {
+    cursor: grabbing !important;
+}
+
+.sortable-chosen,
+sortable-chosen.sortable-ghost {
+    opacity: 100%;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.sortable-ghost {
+    background-color: var(--accent-color);
+    opacity: 0;
+}
+
+
+.drag-handle {
+    cursor: grab;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.selected-phases {
+    background-color: var(--accent-color);
+}
+
+.danger-btn:hover {
+    color: var(--danger-color);
+}
+
+.lernziele-container span:not(.lernziel-hinzufuegen-span)::before {
+    content: '•';
+    position: relative;
+    left: -20px;
+    color: var(--accent-color);
+}
+
+span[contenteditable="true"] {
+    width: 100%;
+    background-color: var(--surface-color);
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    padding: 0.25rem;
+    margin: -0.25rem;
+    
+}
+
+span[contenteditable="true"]:focus {
+
+    background-color: var(--bg-color);
+
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.lucide {
+    width: 23px;
+    height: 23px;
+    stroke-width: 2;
+}
