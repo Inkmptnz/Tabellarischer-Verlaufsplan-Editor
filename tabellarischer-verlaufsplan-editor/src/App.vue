@@ -114,13 +114,10 @@ onMounted(() => {
       ghostClass: 'sortable-ghost',
       chosenClass: 'sortable-chosen',
       onEnd: (event) => {
-        // Diese Funktion wird aufgerufen, nachdem der Benutzer die Zeile losgelassen hat.
         const { oldIndex, newIndex } = event;
 
-        // 1. Entferne das verschobene Element aus dem Array an der alten Position
         const [movedItem] = phasen.value.splice(oldIndex, 1);
         
-        // 2. Füge das Element an der neuen Position wieder in das Array ein
         phasen.value.splice(newIndex, 0, movedItem);
       }
     });
