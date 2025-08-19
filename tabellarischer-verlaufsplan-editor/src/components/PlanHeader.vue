@@ -1,23 +1,22 @@
 <script setup>
     const props = defineProps({
-    schulname: String,
-    datum: String,
-    startzeit: String,
-    lehrername: String
+		schulname: String,
+		datum: String,
+		startzeit: String,
+		lehrername: String
     })
 
     const emit = defineEmits([
-    'update:schulname',
-    'update:datum',
-    'update:startzeit',
-    'update:lehrername'
+		'update:schulname',
+		'update:datum',
+		'update:startzeit',
+		'update:lehrername'
     ])
 </script>
 
 
 <template>
   <header class="plan-header">
-    <!-- Jedes Input sendet bei einer Änderung ein 'update'-Event mit dem neuen Wert nach oben. -->
     <input
       type="text"
       class="header-input"
@@ -57,7 +56,6 @@
     margin-bottom: 2rem;
     border-bottom: 1px solid var(--border-color);
     }
-    
     .header-input {
     flex: 1;
     min-width: 200px;

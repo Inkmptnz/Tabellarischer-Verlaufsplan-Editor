@@ -1,5 +1,5 @@
 <script setup>
-    import { Plus, Save, Printer } from 'lucide-vue-next'
+    import { Plus, Save, Printer, FolderInput } from 'lucide-vue-next'
 
     defineProps({
     gesamtdauer: Number,
@@ -25,6 +25,12 @@
         <Save />
         <span>Speichern</span>
       </button>
+
+      <button type="button" class="action-btn import-btn">
+        <FolderInput />
+        <span>Importieren</span>
+      </button>
+      
       <button type="button" class="action-btn print-btn">
         <Printer />
         <span>Drucken</span>
@@ -67,16 +73,14 @@
         gap: 1.5rem;
     }
 
-    .lernziel-hinzufuegen-btn:hover {
-        opacity: 100%;
-    }
-
     .action-bar .input-group {
         gap: 0.5rem;
     }
 
     .action-bar .gesamtdauer-input {
         width: 60px;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
     }
 
     .time-summary {

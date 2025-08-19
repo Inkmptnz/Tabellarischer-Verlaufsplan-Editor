@@ -19,9 +19,12 @@
     <div class="topic-container">
       <h1
         class="thema-input"
+        :class="{ 'is-empty': !stundenthema }"
         contenteditable="true"
+        data-placeholder="Stundenthema"
         @input="emit('update:stundenthema', $event.target.innerText)"
         v-text="stundenthema"
+        @vue:mounted="({ el }) => el.innerText = lernziel.text"
       ></h1>
     </div>
 
@@ -95,5 +98,22 @@
         justify-content: space-between;
         gap: 1rem;
         padding-bottom: 0.5rem;
+    }
+    .thema-input.is-empty::before {
+        content: attr(data-placeholder); /* Liest den Platzhaltertext aus einem data-Attribut */
+        color: var(--text-secondary);     /* Verwendet Ihre vordefinierte Farbe für sekundären Text */
+        cursor: text;
+        pointer-events: none; /* Stellt sicher, dass Klicks auf den Platzhalter das Element fokussieren */
+    }
+
+    .lernziel-hinzufuegen-btn {
+        margin-top: 1rem;
+        width: 100%;
+        outline: 2px solid var(--accent-color);
+        opacity: 30%;
+    }
+
+    .lernziel-hinzufuegen-btn:hover {
+        opacity: 100%;
     }
 </style>

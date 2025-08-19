@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onMounted } from 'vue'
+    import { ref, watch } from 'vue'
     import Sortable from 'sortablejs'
     import { GripVertical, Trash2 } from 'lucide-vue-next'
 
@@ -11,22 +11,33 @@
 
     const tableBodyRef = ref(null)
 
-    onMounted(() => {
-    if (tableBodyRef.value) {
+    watch(() => {
+    if (tableBodyRef.value && !tableBodyRef.value.sortable) {
         new Sortable(tableBodyRef.value, {
         animation: 150,
         handle: '.drag-handle',
         ghostClass: 'sortable-ghost',
         chosenClass: 'sortable-chosen',
+        onChoose: function(e) {
+            e.target.classList.add('grabbing');
+        },
+        onUnchoose: function(e) {
+            e.target.classList.remove('grabbing');
+        },
+        onStart: function(e) {
+            e.target.classList.add('grabbing');
+        },
         onEnd: (event) => {
+            event.target.classList.remove('grabbing');
             emit('sort-phasen', {
-            oldIndex: event.oldIndex,
-            newIndex: event.newIndex,
-            })
-        }
+                    oldIndex: event.oldIndex,
+                    newIndex: event.newIndex,
+                })
+            }
         })
+        tableBodyRef.value.sortable = true;
     }
-})
+    }, { deep: true })
 </script>
 
 <template>
@@ -53,7 +64,7 @@
         </td>
         <td class="col-uhr clock-cell">{{ phasenMitUhrzeit[index]?.uhrzeit || '??:??' }}</td>
         <td class="col-dauer">
-          <input type="number" class="cell-input dauer-input" min="0" v-model.number="phase.dauer">
+          <input type="number" class="cell-input dauer-input" min="0" v-model.number="phase.dauer" :placeholder="phase.dauer === 0 ? '0' : ''">
         </td>
         <td class="col-phase">
           <input type="text" placeholder="Phase wählen" class="cell-input phase-input" v-model="phase.phase">
@@ -148,7 +159,7 @@
     }
 
     .col-dauer {
-        width: 6%;
+        width: 3%;
     }
 
     .col-phase {
