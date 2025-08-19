@@ -1,6 +1,6 @@
 <script setup>
 
-    import { ref, computed } from 'vue'
+    import { ref, computed, watchEffect } from 'vue'
 
 
     import PlanHeader from './components/PlanHeader.vue'
@@ -16,10 +16,43 @@
 
     const stundenthema = ref('')
     const lernziele = ref([])
-
     const gesamtdauer = ref(45)
 
     const phasen = ref([])
+
+    const planTabelleKey = ref(0);
+    const savedState = localStorage.getItem('planer-app-state')
+
+    if (savedState) {
+        try {
+            const parsedState = JSON.parse(savedState);
+            schulname.value = parsedState.schulname || '';
+            datum.value = parsedState.datum || new Date().toISOString().slice(0, 10);
+            startzeit.value = parsedState.startzeit || '11:45';
+            lehrername.value = parsedState.lehrername || '';
+            stundenthema.value = parsedState.stundenthema || '';
+            lernziele.value = parsedState.lernziele || [];
+            gesamtdauer.value = parsedState.gesamtdauer || 45;
+            phasen.value = parsedState.phasen || [];
+            planTabelleKey.value += 1;
+        } catch (e) {
+            console.error("Fehler beim Parsen des gespeicherten Zustands:", e);
+        }
+    }
+
+    watchEffect(() => {
+        const appState = {
+            schulname: schulname.value,
+            datum: datum.value,
+            startzeit: startzeit.value,
+            lehrername: lehrername.value,
+            stundenthema: stundenthema.value,
+            lernziele: lernziele.value,
+            gesamtdauer: gesamtdauer.value,
+            phasen: phasen.value
+        };
+        localStorage.setItem('planer-app-state', JSON.stringify(appState));
+    });
 
     const verbleibendeZeit = computed(() => {
         const genutzteDauer = phasen.value.reduce((summe, phase) => summe + (phase.dauer || 0), 0)
@@ -39,8 +72,8 @@
         })
     })
 
-    let nextPhaseId = 3;
-    let nextLernzielId = 3;
+    let nextPhaseId = phasen.value.length ? Math.max(...phasen.value.map(p => p.id)) + 1 : 1;
+    let nextLernzielId = lernziele.value.length ? Math.max(...lernziele.value.map(l => l.id)) + 1 : 1;
 
     function addPhase() {
         phasen.value.push({ id: nextPhaseId++, dauer: 0, phase: '', handlung: '', methode: '', mittel: '', bemerkung: '' })
@@ -69,7 +102,7 @@
     }
     </script>
 
-    <template>
+<template>
     <main class="plan-editor">
         <PlanHeader
         v-model:schulname="schulname"
@@ -94,6 +127,7 @@
         />
 
         <PlanTabelle
+        :key="planTabelleKey"
         :phasen="phasen"
         :phasen-mit-uhrzeit="phasenMitUhrzeit"
         @delete-phase="deletePhase"

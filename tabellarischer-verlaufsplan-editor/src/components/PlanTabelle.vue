@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, watch } from 'vue'
+    import { ref, onMounted } from 'vue'
     import Sortable from 'sortablejs'
     import { GripVertical, Trash2 } from 'lucide-vue-next'
 
@@ -10,33 +10,34 @@
     const emit = defineEmits(['delete-phase', 'sort-phasen'])
 
     const tableBodyRef = ref(null)
+    let sortableInstance = null;
 
-    watch(() => {
-    if (tableBodyRef.value && !tableBodyRef.value.sortable) {
-        new Sortable(tableBodyRef.value, {
-        animation: 150,
-        handle: '.drag-handle',
-        ghostClass: 'sortable-ghost',
-        chosenClass: 'sortable-chosen',
-        onChoose: function(e) {
-            e.target.classList.add('grabbing');
-        },
-        onUnchoose: function(e) {
-            e.target.classList.remove('grabbing');
-        },
-        onStart: function(e) {
-            e.target.classList.add('grabbing');
-        },
-        onEnd: (event) => {
-            event.target.classList.remove('grabbing');
-            emit('sort-phasen', {
-                    oldIndex: event.oldIndex,
-                    newIndex: event.newIndex,
-                })
-            }
-        })
-        tableBodyRef.value.sortable = true;
-    }
+    onMounted(() => {
+        if (tableBodyRef.value && !tableBodyRef.value.sortable) {
+            new Sortable(tableBodyRef.value, {
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            onChoose: function(e) {
+                e.target.classList.add('grabbing');
+            },
+            onUnchoose: function(e) {
+                e.target.classList.remove('grabbing');
+            },
+            onStart: function(e) {
+                e.target.classList.add('grabbing');
+            },
+            onEnd: (event) => {
+                event.target.classList.remove('grabbing');
+                emit('sort-phasen', {
+                        oldIndex: event.oldIndex,
+                        newIndex: event.newIndex,
+                    })
+                }
+            })
+            tableBodyRef.value.sortable = true;
+        }
     }, { deep: true })
 </script>
 

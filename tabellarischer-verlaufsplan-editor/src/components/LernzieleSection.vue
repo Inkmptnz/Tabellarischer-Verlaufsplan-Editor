@@ -23,8 +23,7 @@
         contenteditable="true"
         data-placeholder="Stundenthema"
         @input="emit('update:stundenthema', $event.target.innerText)"
-        v-text="stundenthema"
-        @vue:mounted="({ el }) => el.innerText = lernziel.text"
+        @vue:mounted="({ el }) => el.innerText = stundenthema"
       ></h1>
     </div>
 
@@ -33,11 +32,12 @@
       <ul>
         <li v-for="lernziel in lernziele" :key="lernziel.id">
           <span
+            v-once 
             contenteditable="true"
             role="textbox"
             class="lernziel-text"
             @input="emit('update-lernziel-text', { id: lernziel.id, text: $event.target.innerText })"
-            @vue:mounted="({ el }) => el.innerText = lernziel.text"
+            v-text="lernziel.text"
           ></span>
           <button
             type="button"
@@ -100,10 +100,10 @@
         padding-bottom: 0.5rem;
     }
     .thema-input.is-empty::before {
-        content: attr(data-placeholder); /* Liest den Platzhaltertext aus einem data-Attribut */
-        color: var(--text-secondary);     /* Verwendet Ihre vordefinierte Farbe für sekundären Text */
+        content: attr(data-placeholder);
+        color: var(--text-secondary);
         cursor: text;
-        pointer-events: none; /* Stellt sicher, dass Klicks auf den Platzhalter das Element fokussieren */
+        pointer-events: none; 
     }
 
     .lernziel-hinzufuegen-btn {
