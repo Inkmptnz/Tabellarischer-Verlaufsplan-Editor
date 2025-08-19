@@ -1,12 +1,27 @@
 <script setup>
-    import { Plus, Save, Printer, FolderInput } from 'lucide-vue-next'
+    import { ref } from 'vue'
+    import { Plus, Save, Printer, FolderInput, RotateCcw } from 'lucide-vue-next'
 
     defineProps({
     gesamtdauer: Number,
     verbleibendeZeit: Number
     })
 
-    const emit = defineEmits(['update:gesamtdauer', 'add-phase'])
+    const emit = defineEmits(['update:gesamtdauer', 'add-phase', 'reset-all', 'reset-all-data'])
+    let pressTimer = null
+    const isPressing = ref(false)
+
+    function startPressTimer() {
+        isPressing.value = true
+        pressTimer = setTimeout(() => {
+            emit('reset-all-data')
+            isPressing.value = false
+        }, 2000)
+    }
+    function cancelPressTimer() {
+        clearTimeout(pressTimer)
+        isPressing.value = false
+    }
 </script>
 
 
@@ -35,6 +50,28 @@
         <Printer />
         <span>Drucken</span>
       </button>
+
+      <button type="button" class="action-btn reset-btn" title="Alle Daten zurücksetzen (2s halten)"
+        @mousedown="startPressTimer"
+        @mouseup="cancelPressTimer"
+        @mouseleave="cancelPressTimer"
+        :class="{ 'is-pressing': isPressing }"
+      >
+        <svg class="progress-ring" width="40" height="40">
+            <circle
+                class="progress-ring-circle"
+                stroke="var(--danger-color)"
+                stroke-width="2"
+                fill="transparent"
+                r="18"
+                cx="20"
+                cy="20"
+            />
+        </svg>
+
+        <RotateCcw />
+      </button>
+
     </div>
     <div class="time-controls">
       <div class="input-group">
@@ -70,7 +107,7 @@
     .main-actions {
         display: flex;
         align-items: center;
-        gap: 1.5rem;
+        gap: 0.5rem;
     }
 
     .action-bar .input-group {
@@ -85,5 +122,42 @@
 
     .time-summary {
         color: var(--text-secondary);
+    }
+    .lucide-rotate-ccw-icon {
+        color: var(--danger-color);
+       
+    }
+
+    .reset-btn {
+        position: relative;
+        padding: 0.5rem; 
+        width: 44px;
+        height: 44px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .progress-ring {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-90deg); /* Startet die Linie oben */
+    }
+
+    .progress-ring-circle {
+        stroke-dasharray: 113 113; /* Umfang Kreis (2 * PI * 14 ≈ 88) */
+        stroke-dashoffset: 113; 
+        transition: stroke-dashoffset 2s linear;
+    } 
+    
+
+    .reset-btn.is-pressing .progress-ring-circle {
+        stroke-dashoffset: 0;
+    }
+
+    .reset-icon {
+        position: relative;
+        z-index: 1;
     }
 </style>

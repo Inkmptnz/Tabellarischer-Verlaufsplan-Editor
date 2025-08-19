@@ -100,6 +100,12 @@
             lernziel.text = text;
         }
     }
+
+    function resetAllData() {   
+        localStorage.removeItem('planer-app-state')
+        location.reload()
+    }
+
     </script>
 
 <template>
@@ -124,6 +130,7 @@
         :verbleibende-zeit="verbleibendeZeit"
         v-model:gesamtdauer="gesamtdauer"
         @add-phase="addPhase"
+        @reset-all-data="resetAllData"
         />
 
         <PlanTabelle
