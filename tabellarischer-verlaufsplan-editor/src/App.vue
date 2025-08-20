@@ -1,6 +1,7 @@
 <script setup>
 
     import { ref, computed, watchEffect } from 'vue'
+    import { usePdfExport } from './composables/usePdfExport.js'
 
 
     import PlanHeader from './components/PlanHeader.vue'
@@ -8,6 +9,7 @@
     import ActionBar from './components/ActionBar.vue'
     import PlanTabelle from './components/PlanTabelle.vue'
 
+    const { isExportingPdf, generatePdf } = usePdfExport()
 
     const schulname = ref('')
     const datum = ref(new Date().toISOString().slice(0, 10))
@@ -82,6 +84,13 @@
         phasen.value = phasen.value.filter(p => p.id !== phaseId)
     }
     function sortPhasen({ oldIndex, newIndex }) {
+        console.log( "old",oldIndex);
+
+         console.log( "new",newIndex);
+        //const indicesToRemove = new Set(oldIndices);
+        // const movedItems = phasen.value.filter((_, index) => indicesToRemove.has(index));
+        // const remainingItems = phasen.value.filter((_, index) => !indicesToRemove.has(index));
+
         const [movedItem] = phasen.value.splice(oldIndex, 1)
         phasen.value.splice(newIndex, 0, movedItem)
     }
@@ -106,7 +115,20 @@
         location.reload()
     }
 
-    </script>
+    function handlePdfExport() {        
+        const exportData = {
+            schulname: schulname.value,
+            lehrername: lehrername.value,
+            datum: datum.value,
+            stundenthema: stundenthema.value,
+            phasenMitUhrzeit: phasenMitUhrzeit.value,
+            lernziele: lernziele.value
+        };
+
+        generatePdf(exportData);
+    }
+
+</script>
 
 <template>
     <main class="plan-editor">
@@ -130,6 +152,7 @@
         :verbleibende-zeit="verbleibendeZeit"
         v-model:gesamtdauer="gesamtdauer"
         @add-phase="addPhase"
+        @export-pdf="handlePdfExport"
         @reset-all-data="resetAllData"
         />
 

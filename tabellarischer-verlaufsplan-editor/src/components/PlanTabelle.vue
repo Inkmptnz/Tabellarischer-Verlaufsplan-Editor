@@ -1,44 +1,39 @@
 <script setup>
-    import { ref, onMounted } from 'vue'
-    import Sortable from 'sortablejs'
+    import { ref, watchEffect } from 'vue'
+    import { Sortable, MultiDrag } from 'sortablejs';
+    Sortable.mount(new MultiDrag());
     import { GripVertical, Trash2 } from 'lucide-vue-next'
 
     const props = defineProps({
-    phasen: Array,
-    phasenMitUhrzeit: Array
+        phasen: Array,
+        phasenMitUhrzeit: Array
     })
     const emit = defineEmits(['delete-phase', 'sort-phasen'])
 
     const tableBodyRef = ref(null)
     let sortableInstance = null;
 
-    onMounted(() => {
+    watchEffect(() => {
         if (tableBodyRef.value && !tableBodyRef.value.sortable) {
             new Sortable(tableBodyRef.value, {
-            animation: 150,
-            handle: '.drag-handle',
-            ghostClass: 'sortable-ghost',
-            chosenClass: 'sortable-chosen',
-            onChoose: function(e) {
-                e.target.classList.add('grabbing');
-            },
-            onUnchoose: function(e) {
-                e.target.classList.remove('grabbing');
-            },
-            onStart: function(e) {
-                e.target.classList.add('grabbing');
-            },
-            onEnd: (event) => {
-                event.target.classList.remove('grabbing');
-                emit('sort-phasen', {
-                        oldIndex: event.oldIndex,
-                        newIndex: event.newIndex,
-                    })
-                }
+                animation: 150,
+                swapThreshold: 0.4,
+                handle: '.drag-handle',
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+
+                multiDrag: true, 
+                selectedClass: 'selected-phases',
+
+                fallbackTolerance: 3, 
+                forceFallback: true,
+
+                
+                onMove: function(e) { e.target.classList.add('grabbing'); }        
             })
             tableBodyRef.value.sortable = true;
         }
-    }, { deep: true })
+    })
 </script>
 
 <template>

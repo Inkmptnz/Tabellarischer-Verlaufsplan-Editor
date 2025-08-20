@@ -3,11 +3,11 @@
     import { Plus, Save, Printer, FolderInput, RotateCcw } from 'lucide-vue-next'
 
     defineProps({
-    gesamtdauer: Number,
-    verbleibendeZeit: Number
+        gesamtdauer: Number,
+        verbleibendeZeit: Number
     })
 
-    const emit = defineEmits(['update:gesamtdauer', 'add-phase', 'reset-all', 'reset-all-data'])
+    const emit = defineEmits(['update:gesamtdauer', 'add-phase', 'reset-all', 'reset-all-data', 'export-pdf'])
     let pressTimer = null
     const isPressing = ref(false)
 
@@ -36,6 +36,7 @@
         <Plus />
         <span>Neue Phase</span>
       </button>
+
       <button type="button" class="action-btn save-btn">
         <Save />
         <span>Speichern</span>
@@ -46,9 +47,13 @@
         <span>Importieren</span>
       </button>
       
-      <button type="button" class="action-btn print-btn">
+      <button 
+        type="button" 
+        class="action-btn print-btn"
+        @click="emit('export-pdf')"
+      >
         <Printer />
-        <span>Drucken</span>
+        <span>PDF Export</span>
       </button>
 
       <button type="button" class="action-btn reset-btn" title="Alle Daten zurücksetzen (2s halten)"
