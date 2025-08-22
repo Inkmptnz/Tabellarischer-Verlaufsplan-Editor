@@ -1,15 +1,17 @@
 <script setup>
 
 	import { ref, computed, watchEffect } from 'vue'
-	import { usePdfExport } from './composables/usePdfExport.js'
 
+	import { usePdfExport } from './composables/usePdfExport.js'
+	import { useFileHandler } from './composables/useFileHandler.js';
 
 	import PlanHeader from './components/PlanHeader.vue'
 	import LernzieleSection from './components/LernzieleSection.vue'
 	import ActionBar from './components/ActionBar.vue'
 	import PlanTabelle from './components/PlanTabelle.vue'
 
-	const { isExportingPdf, generatePdf } = usePdfExport()
+	const { generatePdf } = usePdfExport()
+	const { exportDataAsJson, importDataFromJson } = useFileHandler();
 
 	const schulname = ref('')
 	const datum = ref(new Date().toISOString().slice(0, 10))
@@ -93,13 +95,6 @@
 		phasen.value = phasen.value.filter(p => p.id !== phaseId)
 	}
 	function sortPhasen({ oldIndex, newIndex }) {
-		console.log( "old",oldIndex);
-
-		 console.log( "new",newIndex);
-		//const indicesToRemove = new Set(oldIndices);
-		// const movedItems = phasen.value.filter((_, index) => indicesToRemove.has(index));
-		// const remainingItems = phasen.value.filter((_, index) => !indicesToRemove.has(index));
-
 		const [movedItem] = phasen.value.splice(oldIndex, 1)
 		phasen.value.splice(newIndex, 0, movedItem)
 	}
@@ -137,6 +132,39 @@
 		generatePdf(exportData);
 	}
 
+	function hanldeExportToJson() {
+		const appState = {
+			schulname: schulname.value,
+			datum: datum.value,
+			startzeit: startzeit.value,
+			lehrername: lehrername.value,
+			stundenthema: stundenthema.value,
+			lernziele: lernziele.value,
+			gesamtdauer: gesamtdauer.value,
+			phasen: phasen.value
+  		};
+		exportDataAsJson(appState);
+	}
+
+	async function handleImportFromJson() {
+		try {
+			const importedData = await importDataFromJson();
+
+			if (importedData) {
+				schulname.value = importedData.schulname || '';
+				datum.value = importedData.datum || new Date().toISOString().slice(0, 10);
+				startzeit.value = importedData.startzeit || '11:45';
+				lehrername.value = importedData.lehrername || '';
+				stundenthema.value = importedData.stundenthema || '';
+				lernziele.value = importedData.lernziele || [];
+				gesamtdauer.value = importedData.gesamtdauer || 45;
+				phasen.value = importedData.phasen || [];
+			}
+		} catch (error) {
+			console.error("Fehler beim Importieren der Daten:", error);
+    		alert('Fehler beim Importieren der Datei. Bitte stellen Sie sicher, dass es eine valide JSON-Datei ist.');
+		}
+	}
 </script>
 
 <template>
@@ -161,6 +189,8 @@
 		:verbleibende-zeit="verbleibendeZeit"
 		v-model:gesamtdauer="gesamtdauer"
 		@add-phase="addPhase"
+		@export-json="hanldeExportToJson"
+		@import-json="handleImportFromJson"
 		@export-pdf="handlePdfExport"
 		@reset-all-data="resetAllData"
 		/>

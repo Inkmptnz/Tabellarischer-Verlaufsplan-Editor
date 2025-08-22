@@ -1,13 +1,15 @@
 <script setup>
     import { ref } from 'vue'
-    import { Plus, Save, Printer, FolderInput, RotateCcw } from 'lucide-vue-next'
+    import { Plus, Upload, Printer, Download, RotateCcw } from 'lucide-vue-next'
 
     defineProps({
         gesamtdauer: Number,
         verbleibendeZeit: Number
     })
 
-    const emit = defineEmits(['update:gesamtdauer', 'add-phase', 'reset-all', 'reset-all-data', 'export-pdf'])
+    const emit = defineEmits(
+      ['update:gesamtdauer', 'add-phase', 'reset-all', 'reset-all-data', 'export-pdf', 'export-json', 'import-json'
+      ])
     let pressTimer = null
     const isPressing = ref(false)
 
@@ -28,30 +30,22 @@
 <template>
   <div class="action-bar">
     <div class="main-actions">
-      <button
-        type="button"
-        @click="emit('add-phase')"
-        class="action-btn phase-hinzufuegen-btn primary-action"
-      >
+      <button type="button" class="action-btn phase-hinzufuegen-btn primary-action" @click="emit('add-phase')">
         <Plus />
         <span>Neue Phase</span>
       </button>
 
-      <button type="button" class="action-btn save-btn">
-        <Save />
-        <span>Speichern</span>
+      <button type="button" class="action-btn save-btn" @click="emit('export-json')">
+        <Download />
+        <span>Exportieren</span>
       </button>
 
-      <button type="button" class="action-btn import-btn">
-        <FolderInput />
+      <button type="button" class="action-btn import-btn" @click="emit('import-json')">
+        <Upload />
         <span>Importieren</span>
       </button>
       
-      <button 
-        type="button" 
-        class="action-btn print-btn"
-        @click="emit('export-pdf')"
-      >
+      <button type="button" class="action-btn print-btn" @click="emit('export-pdf')">
         <Printer />
         <span>PDF Export</span>
       </button>
