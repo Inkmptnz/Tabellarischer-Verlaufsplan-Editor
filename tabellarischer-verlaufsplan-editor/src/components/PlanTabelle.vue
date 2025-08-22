@@ -11,25 +11,26 @@
     const emit = defineEmits(['delete-phase', 'sort-phasen'])
 
     const tableBodyRef = ref(null)
-    let sortableInstance = null;
 
     watchEffect(() => {
         if (tableBodyRef.value && !tableBodyRef.value.sortable) {
             new Sortable(tableBodyRef.value, {
                 animation: 150,
-                swapThreshold: 0.4,
                 handle: '.drag-handle',
                 ghostClass: 'sortable-ghost',
                 chosenClass: 'sortable-chosen',
-
-                multiDrag: true, 
-                selectedClass: 'selected-phases',
-
-                fallbackTolerance: 3, 
                 forceFallback: true,
-
-                
-                onMove: function(e) { e.target.classList.add('grabbing'); }        
+                onChoose: function(e) { e.target.classList.add('grabbing'); },
+                onUnchoose: function(e) { e.target.classList.remove('grabbing'); },
+                onStart: function(e) { e.target.classList.add('grabbing'); },
+                onEnd: (event) => { 
+                    event.target.classList.remove('grabbing');
+                    emit('sort-phasen', {
+                            oldIndex: event.oldIndex,
+                            newIndex: event.newIndex,
+                        })
+                },
+                onMove: function(e) { e.target.classList.add('grabbing'); },
             })
             tableBodyRef.value.sortable = true;
         }
@@ -220,7 +221,7 @@
 
 
     .grabbing * {
-        cursor: grabbing !important;
+        cursor: grabbing
     }
 
     .sortable-chosen,

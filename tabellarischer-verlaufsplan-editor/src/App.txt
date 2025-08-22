@@ -23,6 +23,7 @@
 	const phasen = ref([])
 
 	const planTabelleKey = ref(0);
+	const savedState = localStorage.getItem('planer-app-state')
 
 	loadState()
 
@@ -64,7 +65,6 @@
 		};
 		localStorage.setItem('planer-app-state', JSON.stringify(appState));
 	}
-	
 	const verbleibendeZeit = computed(() => {
 		const genutzteDauer = phasen.value.reduce((summe, phase) => summe + (phase.dauer || 0), 0)
 		return gesamtdauer.value - genutzteDauer
