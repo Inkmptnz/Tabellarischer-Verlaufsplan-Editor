@@ -143,7 +143,7 @@
 			gesamtdauer: gesamtdauer.value,
 			phasen: phasen.value
   		};
-		exportDataAsJson(appState);
+		exportDataAsJson(appState, `verlaufsplan_${stundenthema.value}.json`);
 	}
 
 	async function handleImportFromJson() {

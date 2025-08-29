@@ -91,7 +91,7 @@ export function usePdfExport() {
       // (Die alte Logik, um Lernziele am Ende hinzuzufügen, wird entfernt)
 
       // --- SCHRITT 5: PDF speichern (unverändert) ---
-      const pdf_name = `Verlaufsplan-${stundenthema}.pdf`
+      const pdf_name = `verlaufsplan_${stundenthema}.pdf`
       doc.save(pdf_name);
     } catch (error) {
       console.error("Fehler beim PDF-Export:", error);
