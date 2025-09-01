@@ -1,5 +1,6 @@
 <script setup>
     import { Plus, Trash2 } from 'lucide-vue-next'
+    import EditableSpan from './EditableSpan.vue';
 
     defineProps({
     stundenthema: String,
@@ -7,10 +8,10 @@
     })
 
     const emit = defineEmits([
-    'update:stundenthema',
-    'add-lernziel',
-    'delete-lernziel',
-    'update-lernziel-text'
+      'update:stundenthema',
+      'add-lernziel',
+      'delete-lernziel',
+      'update-lernziel-text'
     ])
 </script>
 
@@ -31,14 +32,10 @@
       <h2>Lernziele:</h2>
       <ul>
         <li v-for="lernziel in lernziele" :key="lernziel.id">
-          <span
-            v-once 
-            contenteditable="true"
-            role="textbox"
+          <EditableSpan 
+            v-model="lernziel.text" 
             class="lernziel-text"
-            @input="emit('update-lernziel-text', { id: lernziel.id, text: $event.target.innerText })"
-            v-text="lernziel.text"
-          ></span>
+          />
           <button
             type="button"
             @click="emit('delete-lernziel', lernziel.id)"
