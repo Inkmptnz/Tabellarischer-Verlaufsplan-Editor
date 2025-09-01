@@ -1,6 +1,6 @@
 // KORREKTE IMPORTS
 import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable' // Importiere die Funktion explizit
+import autoTable from 'jspdf-autotable'
 
 export function usePdfExport() {
   
@@ -20,8 +20,7 @@ export function usePdfExport() {
         format: 'a4'
       });
       
-      // Header-Informationen
-      // ERSETZE 'arial' DURCH 'helvetica'
+    
       doc.setFont('helvetica', 'normal'); 
       doc.setFontSize(11);
       doc.text(`Schulname: ${schulname || 'N/A'}`, 14, 15);
@@ -32,8 +31,7 @@ export function usePdfExport() {
       const formattedDate = new Date(datum).toLocaleDateString('de-DE');
       doc.text(`Datum: ${formattedDate}`, pageWidth - 14, 15, { align: 'right' });
       
-      // Stundenthema
-      doc.setFont('helvetica', 'bold'); // ERSETZE 'arial' DURCH 'helvetica'
+      doc.setFont('helvetica', 'bold'); 
       doc.setFontSize(14);
       doc.text(stundenthema || 'Kein Thema angegeben', pageWidth / 2, 35, { align: 'center' });
       
@@ -53,7 +51,7 @@ export function usePdfExport() {
         });
       }
 
-      // --- SCHRITT 3: Tabellendaten vorbereiten (unverändert) ---
+      // --- Tabelle ---
       const head = [['Uhr', 'Zeit (Min)', 'Phase', 'Handlung', 'Methode', 'Mittel', 'Bemerkung']];
       const body = phasenMitUhrzeit.map(phase => [
         phase.uhrzeit,
@@ -65,7 +63,7 @@ export function usePdfExport() {
         phase.bemerkung
       ]);
 
-      // --- SCHRITT 4: Tabelle zeichnen, beginnend an der neuen, dynamischen Y-Position ---
+      
       autoTable(doc, {
         head: head,
         body: body,
@@ -81,16 +79,13 @@ export function usePdfExport() {
           textColor: [0, 0, 0],
           fontStyle: 'bold',
         },
-        // ... restliche Stile bleiben gleich ...
+
         columnStyles: {
           0: { cellWidth: 15 }, 1: { cellWidth: 15 }, 2: { cellWidth: 40 }, 3: { cellWidth: 'auto' },
           4: { cellWidth: 30 }, 5: { cellWidth: 30 }, 6: { cellWidth: 40 },
         }
       });
 
-      // (Die alte Logik, um Lernziele am Ende hinzuzufügen, wird entfernt)
-
-      // --- SCHRITT 5: PDF speichern (unverändert) ---
       const pdf_name = `verlaufsplan_${stundenthema}.pdf`
       doc.save(pdf_name);
     } catch (error) {

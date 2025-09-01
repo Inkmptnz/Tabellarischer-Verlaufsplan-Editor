@@ -2,8 +2,8 @@
 
 	import { ref, computed, watchEffect } from 'vue'
 
-	import { usePdfExport } from './composables/usePdfExport.js'
-	import { useFileHandler } from './composables/useFileHandler.js';
+	import { usePdfExport } from './utils/usePdfExport.js'
+	import { useFileHandler } from './utils/useFileHandler.js';
 
 	import PlanHeader from './components/PlanHeader.vue'
 	import LernzieleSection from './components/LernzieleSection.vue'

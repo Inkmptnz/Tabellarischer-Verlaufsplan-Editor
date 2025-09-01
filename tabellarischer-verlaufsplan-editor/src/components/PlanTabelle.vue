@@ -89,167 +89,146 @@
 </template>
 
 <style scoped>
-        .plan-table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-        margin-top: 1rem;
-    }
+/* ====== TABLE: BASE & LAYOUT ====== */
 
-    .plan-table th {
-        background-color: var(--surface-color);
-        padding: 0.75rem 1rem;
-        text-align: center;
-        font-weight: 500;
-        color: var(--text-secondary);
-        vertical-align: middle;
-    }
+.plan-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    margin-top: 1rem;
+}
 
-    .plan-table td {
-        padding: 0.5rem 0.25rem;
-        vertical-align: middle;
-        border-bottom: 1px solid var(--border-color);
-    }
+.plan-table th {
+    position: relative; /* Wichtig für die Positionierung der Resize-Griffe */
+    background-color: var(--surface-color);
+    padding: 0.75rem 1rem;
+    text-align: center;
+    font-weight: 500;
+    color: var(--text-secondary);
+    vertical-align: middle;
+    user-select: none; /* Verhindert das Markieren des Header-Textes */
+}
 
-    .plan-table tbody tr:nth-child(even) td {
-        background-color: rgba(15, 15, 15, 0.5);
-    }
+.plan-table td {
+    padding: 0.5rem 0.25rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+}
 
-    .plan-table .cell-input,
-    .plan-table .handlung-textarea,
-    .plan-table .bemerkung-textarea {
-        width: 100%;
-        background-color: var(--surface-color);
-        border: 2px solid var(--border-color);
-        border-radius: 5px;
-        padding: 0.25rem;
-        margin: -0.25rem;
-    }
-
-    .plan-table .bemerkung-textarea:focus {
-        background-color: var(--bg-color);
-
-        border-color: var(--accent-color);
-        outline: none;
-    }
-
-    .plan-table .col-handlung,
-    .plan-table .col-bemerkung {
-        padding: 1em;
-        outline: none;
-    }
-
-    .col-drag,
-    .col-delete {
-        width: 4%;
-        text-align: center;
-    }
-
-    .drag-handle-cell,
-    .delete-cell {
-        vertical-align: middle;
-    }
-
-    .col-uhr {
-        width: 7%;
-        text-align: center;
-    }
-
-    .col-dauer {
-        width: 3%;
-    }
-
-    .col-phase {
-        width: 15%;
-    }
-
-    .dauer-input {
-        text-align: center;
-    }-table .cell-input:focus,
-    .plan-table .handlung-textarea:focus,
-    .plan-table .bemerkung-textarea:focus {
-        background-color: var(--bg-color);
-
-        border-color: var(--accent-color);
-        outline: none;
-    }
-
-    .plan-table .col-handlung,
-    .plan-table .col-bemerkung {
-        padding: 1em;
-        outline: none;
-    }
-
-    .col-drag,
-    .col-delete {
-        width: 4%;
-        text-align: center;
-    }
-
-    .drag-handle-cell,
-    .delete-cell {
-        vertical-align: middle;
-    }
-
-    .col-uhr {
-        width: 7%;
-        text-align: center;
-    }
-
-    .col-dauer {
-        width: 6%;
-    }
-
-    .col-phase {
-        width: 15%;
-    }
-
-    .dauer-input {
-        text-align: center;
-    }
-    .col-methode {
-        width: 12%;
-    }
-
-    .col-mittel {
-        width: 12%;
-    }
-
-    .col-bemerkung {
-        width: 15%;
-    }
+.plan-table tbody tr:nth-child(even) td {
+    background-color: rgba(28, 28, 28, 0.5);
+}
 
 
-    .grabbing * {
-        cursor: grabbing
-    }
+/* ====== TABLE: CELL CONTENT & INPUTS ====== */
 
-    .sortable-chosen,
-    sortable-chosen.sortable-ghost {
-        opacity: 100%;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    }
+.plan-table .cell-input,
+.plan-table .handlung-textarea,
+.plan-table .bemerkung-textarea {
+    width: 100%;
+    background-color: var(--surface-color);
+    border: 2px solid var(--border-color);
+    border-radius: 5px;
+    padding: 0.25rem;
+    margin: -0.25rem;
+}
 
-    .sortable-ghost {
-        background-color: var(--accent-color);
-        opacity: 0;
-    }
+.plan-table .cell-input:focus,
+.plan-table .handlung-textarea:focus,
+.plan-table .bemerkung-textarea:focus {
+    background-color: var(--bg-color);
+    border-color: var(--accent-color);
+    outline: none;
+}
+
+.plan-table .col-handlung,
+.plan-table .col-bemerkung {
+    /* Vertikale Ausrichtung für mehrzeilige Inhalte überschreiben */
+    vertical-align: top;
+    padding: 1em;
+    outline: none;
+}
+
+.dauer-input {
+    text-align: center;
+}
 
 
-    .drag-handle {
-        cursor: grab;
-    }
+/* ====== TABLE: COLUMN SIZING ====== */
 
-    .drag-handle:active {
-        cursor: grabbing;
-    }
+.col-drag,
+.col-delete {
+    width: 4%;
+    text-align: center;
+}
 
-    .selected-phases {
-        background-color: var(--accent-color);
-    }
+.col-uhr {
+    width: 7%;
+    text-align: center;
+}
 
-    .danger-btn:hover {
-        color: var(--danger-color);
-    }
+.col-dauer {
+    width: 6%;
+}
+
+.col-phase {
+    width: 15%;
+}
+
+.col-methode {
+    width: 12%;
+}
+
+.col-mittel {
+    width: 12%;
+}
+
+.col-bemerkung {
+    width: 15%;
+}
+
+
+/* ====== TABLE: RESIZE HANDLES ====== */
+
+.resize-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    cursor: col-resize;
+}
+
+
+/* ====== TABLE: INTERACTIVITY (DRAG & DROP) ====== */
+
+.drag-handle {
+    cursor: grab;
+}
+
+.drag-handle:active {
+    cursor: grabbing;
+}
+
+.grabbing * {
+    cursor: grabbing !important;
+}
+
+.sortable-ghost {
+    display: none;
+}
+
+.sortable-chosen {
+    opacity: 1;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.selected-phases {
+    background-color: var(--accent-color);
+}
+
+.danger-btn:hover {
+    color: var(--danger-color);
+}
 
 </style>
