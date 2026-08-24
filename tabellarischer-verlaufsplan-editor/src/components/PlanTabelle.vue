@@ -1,38 +1,45 @@
 <script setup>
-    import { ref, watchEffect } from 'vue'
-    import Sortable from 'sortablejs'
-    import { GripVertical, Trash2 } from 'lucide-vue-next'
+import { ref, watchEffect } from 'vue'
+import Sortable from 'sortablejs'
+import { GripVertical, Trash2 } from 'lucide-vue-next'
 
-    const props = defineProps({
-        phasen: Array,
-        phasenMitUhrzeit: Array
+defineProps({
+  phasen: Array,
+  phasenMitUhrzeit: Array,
+})
+const emit = defineEmits(['delete-phase', 'sort-phasen'])
+
+const tableBodyRef = ref(null)
+
+function setDauer(phase, rawValue) {
+  const digits = rawValue.replace(/\D/g, '')
+  phase.dauer = digits === '' ? 0 : Number(digits)
+}
+
+watchEffect(() => {
+  if (tableBodyRef.value && !tableBodyRef.value.sortable) {
+    new Sortable(tableBodyRef.value, {
+      animation: 150,
+      handle: '.drag-handle',
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      forceFallback: true,
+      fallbackOnBody: true,
+      fallbackTolerance: 3,
+      onStart: function (e) {
+        e.target.classList.add('grabbing')
+      },
+      onEnd: (event) => {
+        event.target.classList.remove('grabbing')
+        emit('sort-phasen', {
+          oldIndex: event.oldIndex,
+          newIndex: event.newIndex,
+        })
+      },
     })
-    const emit = defineEmits(['delete-phase', 'sort-phasen'])
-
-    const tableBodyRef = ref(null)
-
-    watchEffect(() => {
-        if (tableBodyRef.value && !tableBodyRef.value.sortable) {
-            new Sortable(tableBodyRef.value, {
-                animation: 150,
-                handle: '.drag-handle',
-                ghostClass: 'sortable-ghost',
-                chosenClass: 'sortable-chosen',
-                forceFallback: true,
-                fallbackOnBody: true,
-                fallbackTolerance: 3,
-                onStart: function(e) { e.target.classList.add('grabbing'); },
-                onEnd: (event) => {
-                    event.target.classList.remove('grabbing');
-                    emit('sort-phasen', {
-                            oldIndex: event.oldIndex,
-                            newIndex: event.newIndex,
-                        })
-                },
-            })
-            tableBodyRef.value.sortable = true;
-        }
-    })
+    tableBodyRef.value.sortable = true
+  }
+})
 </script>
 
 <template>
@@ -59,25 +66,63 @@
         </td>
         <td class="col-uhr clock-cell">{{ phasenMitUhrzeit[index]?.uhrzeit || '??:??' }}</td>
         <td class="col-dauer">
-          <input type="number" class="cell-input dauer-input" min="0" v-model.number="phase.dauer" :placeholder="phase.dauer === 0 ? '0' : ''">
+          <input
+            type="text"
+            inputmode="numeric"
+            class="cell-input dauer-input"
+            :value="phase.dauer"
+            :placeholder="phase.dauer === 0 ? '0' : ''"
+            @input="setDauer(phase, $event.target.value)"
+            @focus="$event.target.select()"
+            @mouseup.prevent
+          />
         </td>
         <td class="col-phase">
-          <input type="text" placeholder="Phase wählen" class="cell-input phase-input" v-model="phase.phase">
+          <input
+            type="text"
+            placeholder="Phase wählen"
+            class="cell-input phase-input"
+            v-model="phase.phase"
+          />
         </td>
         <td class="col-handlung">
-          <textarea class="cell-input handlung-textarea" placeholder="Handlung beschreiben..." v-model="phase.handlung"></textarea>
+          <textarea
+            class="cell-input handlung-textarea"
+            placeholder="Handlung beschreiben..."
+            v-model="phase.handlung"
+          ></textarea>
         </td>
         <td class="col-methode">
-          <input type="text" list="methoden-liste" placeholder="Methode wählen" class="cell-input methode-input" v-model="phase.methode">
+          <input
+            type="text"
+            list="methoden-liste"
+            placeholder="Methode wählen"
+            class="cell-input methode-input"
+            v-model="phase.methode"
+          />
         </td>
         <td class="col-mittel">
-          <input type="text" list="mittel-liste" placeholder="Mittel wählen" class="cell-input mittel-input" v-model="phase.mittel">
+          <input
+            type="text"
+            list="mittel-liste"
+            placeholder="Mittel wählen"
+            class="cell-input mittel-input"
+            v-model="phase.mittel"
+          />
         </td>
         <td class="col-bemerkung">
-          <textarea class="cell-input bemerkung-textarea" placeholder="Bemerkung..." v-model="phase.bemerkung"></textarea>
+          <textarea
+            class="cell-input bemerkung-textarea"
+            placeholder="Bemerkung..."
+            v-model="phase.bemerkung"
+          ></textarea>
         </td>
         <td class="col-delete delete-cell">
-          <button @click="emit('delete-phase', phase.id)" class="action-btn zeile-loeschen-btn danger-btn" title="Zeile löschen">
+          <button
+            @click="emit('delete-phase', phase.id)"
+            class="action-btn zeile-loeschen-btn danger-btn"
+            title="Zeile löschen"
+          >
             <Trash2 />
           </button>
         </td>
@@ -90,150 +135,145 @@
 /* ====== TABLE: BASE & LAYOUT ====== */
 
 .plan-table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-    margin-top: 1rem;
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin-top: 1rem;
 }
 
 .plan-table th {
-    position: relative; /* Wichtig für die Positionierung der Resize-Griffe */
-    background-color: var(--surface-color);
-    padding: 0.75rem 1rem;
-    text-align: center;
-    font-weight: 500;
-    color: var(--text-secondary);
-    vertical-align: middle;
-    user-select: none; /* Verhindert das Markieren des Header-Textes */
+  position: relative; /* Wichtig für die Positionierung der Resize-Griffe */
+  background-color: var(--surface-color);
+  padding: 0.75rem 1rem;
+  text-align: center;
+  font-weight: 500;
+  color: var(--text-secondary);
+  vertical-align: middle;
+  user-select: none; /* Verhindert das Markieren des Header-Textes */
 }
 
 .plan-table td {
-    padding: 0.5rem 0.25rem;
-    vertical-align: middle;
-    border-bottom: 1px solid var(--border-color);
+  padding: 0.5rem 0.25rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .plan-table tbody tr:nth-child(even) td {
-    background-color: rgba(28, 28, 28, 0.5);
+  background-color: rgba(28, 28, 28, 0.5);
 }
-
 
 /* ====== TABLE: CELL CONTENT & INPUTS ====== */
 
 .plan-table .cell-input,
 .plan-table .handlung-textarea,
 .plan-table .bemerkung-textarea {
-    width: 100%;
-    background-color: var(--surface-color);
-    border: 2px solid var(--border-color);
-    border-radius: 5px;
-    padding: 0.25rem;
-    margin: -0.25rem;
+  width: 100%;
+  background-color: var(--surface-color);
+  border: 2px solid var(--border-color);
+  border-radius: 5px;
+  padding: 0.25rem;
+  margin: -0.25rem;
 }
 
 .plan-table .cell-input:focus,
 .plan-table .handlung-textarea:focus,
 .plan-table .bemerkung-textarea:focus {
-    background-color: var(--bg-color);
-    border-color: var(--accent-color);
-    outline: none;
+  background-color: var(--bg-color);
+  border-color: var(--accent-color);
+  outline: none;
 }
 
 .plan-table .col-handlung,
 .plan-table .col-bemerkung {
-    /* Vertikale Ausrichtung für mehrzeilige Inhalte überschreiben */
-    vertical-align: top;
-    padding: 1em;
-    outline: none;
+  /* Vertikale Ausrichtung für mehrzeilige Inhalte überschreiben */
+  vertical-align: top;
+  padding: 1em;
+  outline: none;
 }
 
 .dauer-input {
-    text-align: center;
+  text-align: center;
 }
-
 
 /* ====== TABLE: COLUMN SIZING ====== */
 
 .col-drag,
 .col-delete {
-    width: 4%;
-    text-align: center;
+  width: 4%;
+  text-align: center;
 }
 
 .col-uhr {
-    width: 7%;
-    text-align: center;
+  width: 7%;
+  text-align: center;
 }
 
 .col-dauer {
-    width: 6%;
+  width: 6%;
 }
 
 .col-phase {
-    width: 15%;
+  width: 15%;
 }
 
 .col-methode {
-    width: 12%;
+  width: 12%;
 }
 
 .col-mittel {
-    width: 12%;
+  width: 12%;
 }
 
 .col-bemerkung {
-    width: 15%;
+  width: 15%;
 }
-
 
 /* ====== TABLE: RESIZE HANDLES ====== */
 
 .resize-handle {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 5px;
-    height: 100%;
-    cursor: col-resize;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
 }
-
 
 /* ====== TABLE: INTERACTIVITY (DRAG & DROP) ====== */
 
 .drag-handle {
-    cursor: grab;
+  cursor: grab;
 }
 
 .drag-handle:active {
-    cursor: grabbing;
+  cursor: grabbing;
 }
 
 .grabbing * {
-    cursor: grabbing !important;
+  cursor: grabbing !important;
 }
 
 .sortable-ghost td {
-    background-color: rgba(59, 130, 246, 0.18) !important;
-    border-top: 1px dashed var(--accent-color);
-    border-bottom: 1px dashed var(--accent-color);
+  background-color: rgba(59, 130, 246, 0.18) !important;
+  border-top: 1px dashed var(--accent-color);
+  border-bottom: 1px dashed var(--accent-color);
 }
 
 .sortable-chosen {
-    opacity: 1;
+  opacity: 1;
 }
 
 .sortable-fallback {
-    display: table !important;
-    table-layout: fixed;
-    background-color: var(--surface-color);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-    border-radius: 6px;
-    opacity: 0.95;
-    pointer-events: none;
+  display: table !important;
+  table-layout: fixed;
+  background-color: var(--surface-color);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  border-radius: 6px;
+  opacity: 0.95;
+  pointer-events: none;
 }
 
 .danger-btn:hover {
-    color: var(--danger-color);
+  color: var(--danger-color);
 }
-
 </style>

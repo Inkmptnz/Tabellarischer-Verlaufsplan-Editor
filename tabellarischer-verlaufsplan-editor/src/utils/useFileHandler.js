@@ -1,55 +1,60 @@
-export function useFileHandler() {
+export function sanitizeFilename(name, fallback = 'verlaufsplan') {
+  const cleaned = (name || '').replace(/[\\/:*?"<>|]/g, '').trim()
+  return cleaned || fallback
+}
 
+export function useFileHandler() {
   function exportDataAsJson(data, filename = 'stundenplan.json') {
-    const jsonString = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonString], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const jsonString = JSON.stringify(data, null, 2)
+    const blob = new Blob([jsonString], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
   }
 
   function importDataFromJson() {
     return new Promise((resolve, reject) => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = '.json,application/json';
+      const input = document.createElement('input')
+      input.type = 'file'
+      input.accept = '.json,application/json'
 
       input.onchange = (event) => {
-        const file = event.target.files[0];
+        const file = event.target.files[0]
         if (!file) {
-          resolve(null);
-          return;
+          resolve(null)
+          return
         }
 
-        const reader = new FileReader();
-        
+        const reader = new FileReader()
+
         reader.onload = (e) => {
           try {
-            const parsedData = JSON.parse(e.target.result);
-            resolve(parsedData);
+            const parsedData = JSON.parse(e.target.result)
+            resolve(parsedData)
           } catch (error) {
-            reject(error);
+            reject(error)
           }
-        };
+        }
 
         reader.onerror = (error) => {
-          reject(error);
-        };
-        
-        reader.readAsText(file);
-      };
+          reject(error)
+        }
 
-      input.click();
-    });
+        reader.readAsText(file)
+      }
+
+      input.click()
+    })
   }
 
   return {
     exportDataAsJson,
-    importDataFromJson
-  };
+    importDataFromJson,
+    sanitizeFilename,
+  }
 }

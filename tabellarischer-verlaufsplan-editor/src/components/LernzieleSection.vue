@@ -1,18 +1,13 @@
 <script setup>
-    import { Plus, Trash2 } from 'lucide-vue-next'
-    import EditableSpan from './EditableSpan.vue';
+import { Plus, Trash2 } from 'lucide-vue-next'
+import EditableSpan from './EditableSpan.vue'
 
-    defineProps({
-    stundenthema: String,
-    lernziele: Array
-    })
+defineProps({
+  stundenthema: String,
+  lernziele: Array,
+})
 
-    const emit = defineEmits([
-      'update:stundenthema',
-      'add-lernziel',
-      'delete-lernziel',
-      'update-lernziel-text'
-    ])
+const emit = defineEmits(['update:stundenthema', 'add-lernziel', 'delete-lernziel'])
 </script>
 
 <template>
@@ -22,9 +17,11 @@
         class="thema-input"
         :class="{ 'is-empty': !stundenthema }"
         contenteditable="true"
+        role="textbox"
+        aria-label="Stundenthema"
         data-placeholder="Stundenthema"
         @input="emit('update:stundenthema', $event.target.innerText)"
-        @vue:mounted="({ el }) => el.innerText = stundenthema"
+        @vue:mounted="({ el }) => (el.innerText = stundenthema)"
       ></h1>
     </div>
 
@@ -32,10 +29,7 @@
       <h2>Lernziele:</h2>
       <ul>
         <li v-for="lernziel in lernziele" :key="lernziel.id">
-          <EditableSpan 
-            v-model="lernziel.text" 
-            class="lernziel-text"
-          />
+          <EditableSpan v-model="lernziel.text" class="lernziel-text" aria-label="Lernziel" />
           <button
             type="button"
             @click="emit('delete-lernziel', lernziel.id)"
@@ -58,59 +52,57 @@
   </section>
 </template>
 
-
 <style scoped>
+.lernziele-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
 
-    .lernziele-section {
-        margin-bottom: 2rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-    }
+.lernziele-container span:not(.lernziel-hinzufuegen-span)::before {
+  content: '•';
+  position: relative;
+  left: -20px;
+  color: var(--accent-color);
+}
 
-    .lernziele-container span:not(.lernziel-hinzufuegen-span)::before {
-        content: '•';
-        position: relative;
-        left: -20px;
-        color: var(--accent-color);
-    }
+.lernziele-container {
+  margin-top: 1.5rem;
+}
 
-    .lernziele-container {
-        margin-top: 1.5rem;
-    }
+.lernziele-container h2 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
 
-    .lernziele-container h2 {
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: var(--text-secondary);
-        margin-bottom: 0.75rem;
-    }
+.lernziele-container ul {
+  padding-left: 1.5rem;
+}
 
-    .lernziele-container ul {
-        padding-left: 1.5rem;
-    }
+.lernziele-container li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+}
+.thema-input.is-empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-secondary);
+  cursor: text;
+  pointer-events: none;
+}
 
-    .lernziele-container li {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        padding-bottom: 0.5rem;
-    }
-    .thema-input.is-empty::before {
-        content: attr(data-placeholder);
-        color: var(--text-secondary);
-        cursor: text;
-        pointer-events: none; 
-    }
+.lernziel-hinzufuegen-btn {
+  margin-top: 1rem;
+  width: 100%;
+  outline: 2px solid var(--accent-color);
+  opacity: 30%;
+}
 
-    .lernziel-hinzufuegen-btn {
-        margin-top: 1rem;
-        width: 100%;
-        outline: 2px solid var(--accent-color);
-        opacity: 30%;
-    }
-
-    .lernziel-hinzufuegen-btn:hover {
-        opacity: 100%;
-    }
+.lernziel-hinzufuegen-btn:hover {
+  opacity: 100%;
+}
 </style>
