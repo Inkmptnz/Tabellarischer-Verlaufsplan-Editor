@@ -8,7 +8,6 @@ import PlanHeader from './components/PlanHeader.vue'
 import LernzieleSection from './components/LernzieleSection.vue'
 import ActionBar from './components/ActionBar.vue'
 import PlanTabelle from './components/PlanTabelle.vue'
-import UndoToast from './components/UndoToast.vue'
 
 const { generatePdf } = usePdfExport()
 const { exportDataAsJson, importDataFromJson, sanitizeFilename } = useFileHandler()
@@ -132,10 +131,6 @@ function undoDelete() {
   target.splice(index, 0, item)
 }
 
-function dismissUndo() {
-  deletedStack.value = []
-}
-
 function resetAllData() {
   localStorage.removeItem('planer-app-state')
   location.reload()
@@ -210,8 +205,10 @@ async function handleImportFromJson() {
 
     <ActionBar
       :verbleibende-zeit="verbleibendeZeit"
+      :can-undo="deletedStack.length > 0"
       v-model:gesamtdauer="gesamtdauer"
       @add-phase="addPhase"
+      @undo="undoDelete"
       @export-json="handleExportToJson"
       @import-json="handleImportFromJson"
       @export-pdf="handlePdfExport"
@@ -225,14 +222,6 @@ async function handleImportFromJson() {
       @sort-phasen="sortPhasen"
     />
   </main>
-
-  <UndoToast
-    v-if="deletedStack.length"
-    :message="deletedStack.at(-1).type === 'phase' ? 'Zeile gelöscht' : 'Lernziel gelöscht'"
-    :count="deletedStack.length"
-    @undo="undoDelete"
-    @dismiss="dismissUndo"
-  />
 
   <datalist id="dauer-presets">
     <option value="45"></option>

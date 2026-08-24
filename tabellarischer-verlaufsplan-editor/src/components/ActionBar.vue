@@ -1,15 +1,17 @@
 <script setup>
 import { ref } from 'vue'
-import { Plus, Upload, Printer, Download, RotateCcw } from 'lucide-vue-next'
+import { Plus, Upload, Printer, Download, RotateCcw, Undo2 } from 'lucide-vue-next'
 
 defineProps({
   gesamtdauer: Number,
   verbleibendeZeit: Number,
+  canUndo: Boolean,
 })
 
 const emit = defineEmits([
   'update:gesamtdauer',
   'add-phase',
+  'undo',
   'reset-all',
   'reset-all-data',
   'export-pdf',
@@ -42,6 +44,17 @@ function cancelPressTimer() {
       >
         <Plus />
         <span>Neue Phase</span>
+      </button>
+
+      <button
+        type="button"
+        class="action-btn undo-btn"
+        :disabled="!canUndo"
+        title="Letzte Löschung rückgängig machen"
+        @click="emit('undo')"
+      >
+        <Undo2 />
+        <span>Rückgängig</span>
       </button>
 
       <button type="button" class="action-btn save-btn" @click="emit('export-json')">

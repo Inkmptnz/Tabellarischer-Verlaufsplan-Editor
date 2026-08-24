@@ -134,6 +134,12 @@ textarea {
   border-color: var(--accent-color-hover);
 }
 
+.action-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .primary-action {
   background-color: var(--accent-color);
   border-color: var(--accent-color);
