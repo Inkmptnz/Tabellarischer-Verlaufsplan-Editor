@@ -1,7 +1,6 @@
 <script setup>
     import { ref, watchEffect } from 'vue'
-    import { Sortable, MultiDrag } from 'sortablejs';
-    Sortable.mount(new MultiDrag());
+    import Sortable from 'sortablejs'
     import { GripVertical, Trash2 } from 'lucide-vue-next'
 
     const props = defineProps({
@@ -20,17 +19,16 @@
                 ghostClass: 'sortable-ghost',
                 chosenClass: 'sortable-chosen',
                 forceFallback: true,
-                onChoose: function(e) { e.target.classList.add('grabbing'); },
-                onUnchoose: function(e) { e.target.classList.remove('grabbing'); },
+                fallbackOnBody: true,
+                fallbackTolerance: 3,
                 onStart: function(e) { e.target.classList.add('grabbing'); },
-                onEnd: (event) => { 
+                onEnd: (event) => {
                     event.target.classList.remove('grabbing');
                     emit('sort-phasen', {
                             oldIndex: event.oldIndex,
                             newIndex: event.newIndex,
                         })
                 },
-                onMove: function(e) { e.target.classList.add('grabbing'); },
             })
             tableBodyRef.value.sortable = true;
         }
@@ -214,17 +212,24 @@
     cursor: grabbing !important;
 }
 
-.sortable-ghost {
-    display: none;
+.sortable-ghost td {
+    background-color: rgba(59, 130, 246, 0.18) !important;
+    border-top: 1px dashed var(--accent-color);
+    border-bottom: 1px dashed var(--accent-color);
 }
 
 .sortable-chosen {
     opacity: 1;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.selected-phases {
-    background-color: var(--accent-color);
+.sortable-fallback {
+    display: table !important;
+    table-layout: fixed;
+    background-color: var(--surface-color);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    border-radius: 6px;
+    opacity: 0.95;
+    pointer-events: none;
 }
 
 .danger-btn:hover {
