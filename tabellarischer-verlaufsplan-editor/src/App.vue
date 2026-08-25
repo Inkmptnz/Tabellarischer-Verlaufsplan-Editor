@@ -155,6 +155,7 @@ function handlePdfExport() {
     stundenthema: stundenthema.value,
     phasenMitUhrzeit: phasenMitUhrzeit.value,
     lernziele: lernziele.value,
+    spalten: aktivesPreset.value.columns,
   }
 
   generatePdf(exportData)

@@ -6,7 +6,8 @@ import { sanitizeFilename } from './useFileHandler.js'
 export function usePdfExport() {
   async function generatePdf(exportData) {
     try {
-      const { schulname, lehrername, datum, stundenthema, phasenMitUhrzeit, lernziele } = exportData
+      const { schulname, lehrername, datum, stundenthema, phasenMitUhrzeit, lernziele, spalten } =
+        exportData
       const doc = new jsPDF({
         orientation: 'landscape',
         unit: 'mm',
@@ -44,16 +45,32 @@ export function usePdfExport() {
       }
 
       // --- Tabelle ---
-      const head = [['Uhr', 'Zeit (Min)', 'Phase', 'Handlung', 'Methode', 'Mittel', 'Bemerkung']]
+      // Uhr/Zeit sind wie in der Weboberfläche feste Spalten, der Rest kommt
+      // aus dem aktiven Preset. Preset-Breiten sind relative Gewichte (siehe
+      // PlanTabelle.vue) und werden hier genauso auf die verfügbare Breite
+      // umgerechnet.
+      const UHR_BREITE_MM = 15
+      const ZEIT_BREITE_MM = 15
+      const marge = 14
+      const verfuegbareBreite = pageWidth - marge * 2 - UHR_BREITE_MM - ZEIT_BREITE_MM
+      const gesamtGewicht = spalten.reduce((summe, spalte) => summe + spalte.width, 0)
+
+      const head = [['Uhr', 'Zeit (Min)', ...spalten.map((spalte) => spalte.label)]]
       const body = phasenMitUhrzeit.map((phase) => [
         phase.uhrzeit,
         phase.dauer,
-        phase.phase,
-        phase.handlung,
-        phase.methode,
-        phase.mittel,
-        phase.bemerkung,
+        ...spalten.map((spalte) => phase[spalte.id]),
       ])
+
+      const columnStyles = {
+        0: { cellWidth: UHR_BREITE_MM },
+        1: { cellWidth: ZEIT_BREITE_MM },
+      }
+      spalten.forEach((spalte, index) => {
+        columnStyles[index + 2] = {
+          cellWidth: gesamtGewicht > 0 ? (spalte.width / gesamtGewicht) * verfuegbareBreite : 'auto',
+        }
+      })
 
       autoTable(doc, {
         head: head,
@@ -71,15 +88,7 @@ export function usePdfExport() {
           fontStyle: 'bold',
         },
 
-        columnStyles: {
-          0: { cellWidth: 15 },
-          1: { cellWidth: 15 },
-          2: { cellWidth: 40 },
-          3: { cellWidth: 'auto' },
-          4: { cellWidth: 30 },
-          5: { cellWidth: 30 },
-          6: { cellWidth: 40 },
-        },
+        columnStyles,
       })
 
       const pdf_name = `${sanitizeFilename('verlaufsplan_' + stundenthema)}.pdf`
