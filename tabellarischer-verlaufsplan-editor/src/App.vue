@@ -23,7 +23,10 @@ const gesamtdauer = ref(45)
 
 
 const { presets } = usePresets()
-const aktivesPreset = presets[0]
+const aktivesPresetName = ref(presets[0].name)
+const aktivesPreset = computed(
+  () => presets.find((preset) => preset.name === aktivesPresetName.value) || presets[0],
+)
 
 const phasen = ref([])
 
@@ -48,6 +51,9 @@ function loadState() {
       lernziele.value = parsedState.lernziele || []
       gesamtdauer.value = parsedState.gesamtdauer || 45
       phasen.value = parsedState.phasen || []
+      if (presets.some((preset) => preset.name === parsedState.aktivesPresetName)) {
+        aktivesPresetName.value = parsedState.aktivesPresetName
+      }
     } catch (e) {
       console.error('Fehler beim Parsen des gespeicherten Zustands:', e)
     }
@@ -64,6 +70,7 @@ function saveState() {
     lernziele: lernziele.value,
     gesamtdauer: gesamtdauer.value,
     phasen: phasen.value,
+    aktivesPresetName: aktivesPresetName.value,
   }
   localStorage.setItem('planer-app-state', JSON.stringify(appState))
 }
@@ -95,7 +102,7 @@ function addPhase() {
   neuePhase.id = nextId(phasen.value)
   neuePhase.dauer = 0
 
-  for (const column of aktivesPreset.columns) {
+  for (const column of aktivesPreset.value.columns) {
     neuePhase[column.id] = ''
   }
   phasen.value.push(neuePhase)
@@ -163,6 +170,7 @@ function handleExportToJson() {
     lernziele: lernziele.value,
     gesamtdauer: gesamtdauer.value,
     phasen: phasen.value,
+    aktivesPresetName: aktivesPresetName.value,
   }
   exportDataAsJson(appState, `${sanitizeFilename('verlaufsplan_' + stundenthema.value)}.json`)
 }
@@ -180,6 +188,9 @@ async function handleImportFromJson() {
       lernziele.value = importedData.lernziele || []
       gesamtdauer.value = importedData.gesamtdauer || 45
       phasen.value = importedData.phasen || []
+      if (presets.some((preset) => preset.name === importedData.aktivesPresetName)) {
+        aktivesPresetName.value = importedData.aktivesPresetName
+      }
     }
   } catch (error) {
     console.error('Fehler beim Importieren der Daten:', error)
@@ -210,7 +221,9 @@ async function handleImportFromJson() {
     <ActionBar
       :verbleibende-zeit="verbleibendeZeit"
       :can-undo="deletedStack.length > 0"
+      :presets="presets"
       v-model:gesamtdauer="gesamtdauer"
+      v-model:aktives-preset-name="aktivesPresetName"
       @add-phase="addPhase"
       @undo="undoDelete"
       @export-json="handleExportToJson"
@@ -227,27 +240,4 @@ async function handleImportFromJson() {
       @sort-phasen="sortPhasen"
     />
   </main>
-
-  <datalist id="dauer-presets">
-    <option value="45"></option>
-    <option value="90"></option>
-  </datalist>
-
-  <datalist id="methoden-liste">
-    <option value="Lehrervortrag"></option>
-    <option value="Stillarbeit"></option>
-    <option value="Partnerarbeit"></option>
-    <option value="Gruppenarbeit"></option>
-    <option value="Experiment"></option>
-    <option value="Präsentation"></option>
-  </datalist>
-
-  <datalist id="mittel-liste">
-    <option value="Arbeitsblatt"></option>
-    <option value="Präsentation"></option>
-    <option value="Beamer"></option>
-    <option value="Smartphone"></option>
-    <option value="Plickerskarten"></option>
-    <option value="Tafel"></option>
-  </datalist>
 </template>

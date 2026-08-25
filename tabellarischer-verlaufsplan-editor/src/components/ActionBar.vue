@@ -6,10 +6,13 @@ defineProps({
   gesamtdauer: Number,
   verbleibendeZeit: Number,
   canUndo: Boolean,
+  presets: Array,
+  aktivesPresetName: String,
 })
 
 const emit = defineEmits([
   'update:gesamtdauer',
+  'update:aktivesPresetName',
   'add-phase',
   'undo',
   'reset-all',
@@ -100,6 +103,19 @@ function cancelPressTimer() {
       </button>
     </div>
     <div class="time-controls">
+      <div class="input-group">
+        <label for="preset-select">Layout:</label>
+        <select
+          id="preset-select"
+          class="preset-select"
+          :value="aktivesPresetName"
+          @change="emit('update:aktivesPresetName', $event.target.value)"
+        >
+          <option v-for="preset in presets" :key="preset.name" :value="preset.name">
+            {{ preset.name }}
+          </option>
+        </select>
+      </div>
       <div class="input-group">
         <label for="gesamtdauer-input">Dauer:</label>
         <input

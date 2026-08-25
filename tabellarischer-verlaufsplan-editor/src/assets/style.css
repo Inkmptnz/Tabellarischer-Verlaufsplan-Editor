@@ -56,6 +56,7 @@ input[type='text']:not(.thema-input),
 input[type='date'],
 input[type='time'],
 input[type='number'],
+select,
 textarea {
   background-color: var(--surface-color);
   color: var(--text-primary);
@@ -69,8 +70,10 @@ textarea {
 
 input:focus,
 textarea:focus,
+select:focus,
 input[type='text']:focus,
 input:hover,
+select:hover,
 input[type='text']:hover {
   outline: none;
   border-color: var(--accent-color);
