@@ -1,0 +1,7 @@
+[
+    { "id": "phase", "label": "Phase", "width": 15 },
+    { "id": "handlung", "label": "Handlung", "width": 33 },
+    { "id": "methode", "label": "Methode", "width": 12 },
+    { "id": "mittel", "label": "Mittel", "width": 12 },
+    { "id": "bemerkung", "label": "Bemerkung", "width": 15 }
+]

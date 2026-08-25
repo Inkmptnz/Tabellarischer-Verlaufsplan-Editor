@@ -3,7 +3,7 @@ import { ref, computed, watchEffect } from 'vue'
 
 import { usePdfExport } from './utils/usePdfExport.js'
 import { useFileHandler } from './utils/useFileHandler.js'
-
+import { usePresets } from './utils/usePresets.js'
 import PlanHeader from './components/PlanHeader.vue'
 import LernzieleSection from './components/LernzieleSection.vue'
 import ActionBar from './components/ActionBar.vue'
@@ -20,6 +20,10 @@ const lehrername = ref('')
 const stundenthema = ref('')
 const lernziele = ref([])
 const gesamtdauer = ref(45)
+
+
+const { presets } = usePresets()
+const aktivesPreset = presets[0]
 
 const phasen = ref([])
 
@@ -87,16 +91,16 @@ function nextId(array) {
 }
 
 function addPhase() {
-  phasen.value.push({
-    id: nextId(phasen.value),
-    dauer: 0,
-    phase: '',
-    handlung: '',
-    methode: '',
-    mittel: '',
-    bemerkung: '',
-  })
+  const neuePhase = {}
+  neuePhase.id = nextId(phasen.value)
+  neuePhase.dauer = 0
+
+  for (const column of aktivesPreset.columns) {
+    neuePhase[column.id] = ''
+  }
+  phasen.value.push(neuePhase)
 }
+
 function deletePhase(phaseId) {
   const index = phasen.value.findIndex((p) => p.id === phaseId)
   if (index === -1) return
@@ -218,6 +222,7 @@ async function handleImportFromJson() {
     <PlanTabelle
       :phasen="phasen"
       :phasen-mit-uhrzeit="phasenMitUhrzeit"
+      :spalten="aktivesPreset.columns"
       @delete-phase="deletePhase"
       @sort-phasen="sortPhasen"
     />

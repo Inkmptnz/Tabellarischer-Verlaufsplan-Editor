@@ -6,6 +6,7 @@ import { GripVertical, Trash2 } from 'lucide-vue-next'
 defineProps({
   phasen: Array,
   phasenMitUhrzeit: Array,
+  spalten: Array,
 })
 const emit = defineEmits(['delete-phase', 'sort-phasen'])
 
@@ -49,11 +50,9 @@ watchEffect(() => {
         <th class="col-drag"></th>
         <th class="col-uhr">Uhr</th>
         <th class="col-dauer">Zeit</th>
-        <th class="col-phase">Phase</th>
-        <th class="col-handlung">Handlung</th>
-        <th class="col-methode">Methode</th>
-        <th class="col-mittel">Mittel</th>
-        <th class="col-bemerkung">Bemerkung</th>
+        <th v-for="spalte in spalten" :key="spalte.id" :style="{ width: spalte.width + '%' }">
+          {{ spalte.label }}
+        </th>
         <th class="col-delete"></th>
       </tr>
     </thead>
@@ -77,45 +76,13 @@ watchEffect(() => {
             @mouseup.prevent
           />
         </td>
-        <td class="col-phase">
+        <td v-for="spalte in spalten" :key="spalte.id">
           <input
             type="text"
-            placeholder="Phase wählen"
-            class="cell-input phase-input"
-            v-model="phase.phase"
+            class="cell-input"
+            :placeholder="spalte.label + ' ...'"
+            v-model="phase[spalte.id]"
           />
-        </td>
-        <td class="col-handlung">
-          <textarea
-            class="cell-input handlung-textarea"
-            placeholder="Handlung beschreiben..."
-            v-model="phase.handlung"
-          ></textarea>
-        </td>
-        <td class="col-methode">
-          <input
-            type="text"
-            list="methoden-liste"
-            placeholder="Methode wählen"
-            class="cell-input methode-input"
-            v-model="phase.methode"
-          />
-        </td>
-        <td class="col-mittel">
-          <input
-            type="text"
-            list="mittel-liste"
-            placeholder="Mittel wählen"
-            class="cell-input mittel-input"
-            v-model="phase.mittel"
-          />
-        </td>
-        <td class="col-bemerkung">
-          <textarea
-            class="cell-input bemerkung-textarea"
-            placeholder="Bemerkung..."
-            v-model="phase.bemerkung"
-          ></textarea>
         </td>
         <td class="col-delete delete-cell">
           <button
@@ -183,14 +150,6 @@ watchEffect(() => {
   outline: none;
 }
 
-.plan-table .col-handlung,
-.plan-table .col-bemerkung {
-  /* Vertikale Ausrichtung für mehrzeilige Inhalte überschreiben */
-  vertical-align: top;
-  padding: 1em;
-  outline: none;
-}
-
 .dauer-input {
   text-align: center;
 }
@@ -210,22 +169,6 @@ watchEffect(() => {
 
 .col-dauer {
   width: 6%;
-}
-
-.col-phase {
-  width: 15%;
-}
-
-.col-methode {
-  width: 12%;
-}
-
-.col-mittel {
-  width: 12%;
-}
-
-.col-bemerkung {
-  width: 15%;
 }
 
 /* ====== TABLE: RESIZE HANDLES ====== */
