@@ -10,8 +10,6 @@ for (const dateiname in presetModules) {
   presets.push(preset)
 }
 
-console.log(presets)
-
 function getPresetName(fileName) {
   const split = fileName.split('/')
   const nameWithExtension = split[split.length - 1]

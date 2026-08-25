@@ -1,4 +1,4 @@
 [
-    { "id": "phase", "label": "Phase", "width": 15 },
-    { "id": "handlung", "label": "Handlung", "width": 72 }
+    { "id": "phase", "label": "Phase", "width": 15, "type": "text" },
+    { "id": "handlung", "label": "Handlung", "width": 72, "type": "textarea" }
 ]

@@ -1,7 +1,26 @@
 [
-    { "id": "phase", "label": "Phase", "width": 15 },
-    { "id": "handlung", "label": "Handlung", "width": 33 },
-    { "id": "methode", "label": "Methode", "width": 12 },
-    { "id": "mittel", "label": "Mittel", "width": 12 },
-    { "id": "bemerkung", "label": "Bemerkung", "width": 15 }
+    { "id": "phase", "label": "Phase", "width": 15, "type": "text" },
+    { "id": "handlung", "label": "Handlung", "width": 33, "type": "textarea" },
+    {
+        "id": "methode",
+        "label": "Methode",
+        "width": 12,
+        "type": "datalist",
+        "options": [
+            "Lehrervortrag",
+            "Stillarbeit",
+            "Partnerarbeit",
+            "Gruppenarbeit",
+            "Experiment",
+            "Präsentation"
+        ]
+    },
+    {
+        "id": "mittel",
+        "label": "Mittel",
+        "width": 12,
+        "type": "datalist",
+        "options": ["Arbeitsblatt", "Präsentation", "Beamer", "Smartphone", "Plickerskarten", "Tafel"]
+    },
+    { "id": "bemerkung", "label": "Bemerkung", "width": 15, "type": "textarea" }
 ]

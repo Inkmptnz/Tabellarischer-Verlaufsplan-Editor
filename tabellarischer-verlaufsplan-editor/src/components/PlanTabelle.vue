@@ -1,9 +1,9 @@
 <script setup>
-import { ref, watchEffect } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import Sortable from 'sortablejs'
 import { GripVertical, Trash2 } from 'lucide-vue-next'
 
-defineProps({
+const props = defineProps({
   phasen: Array,
   phasenMitUhrzeit: Array,
   spalten: Array,
@@ -11,6 +11,21 @@ defineProps({
 const emit = defineEmits(['delete-phase', 'sort-phasen'])
 
 const tableBodyRef = ref(null)
+
+// Drag + Uhr + Dauer + Delete sind fest codierte Spalten außerhalb der Presets
+const FESTE_SPALTEN_BREITE = 4 + 7 + 6 + 4
+const VERFUEGBARE_BREITE = 100 - FESTE_SPALTEN_BREITE
+
+// Preset-Breiten sind relative Gewichte, keine absoluten Prozentwerte —
+// werden hier immer auf die tatsächlich verfügbare Breite normiert, damit
+// ein Preset mit falscher Summe das Tabellen-Layout nicht sprengt.
+const spaltenMitBreite = computed(() => {
+  const gesamtGewicht = props.spalten.reduce((summe, spalte) => summe + spalte.width, 0)
+  return props.spalten.map((spalte) => ({
+    ...spalte,
+    breite: gesamtGewicht > 0 ? (spalte.width / gesamtGewicht) * VERFUEGBARE_BREITE : 0,
+  }))
+})
 
 function setDauer(phase, rawValue) {
   const digits = rawValue.replace(/\D/g, '')
@@ -50,7 +65,7 @@ watchEffect(() => {
         <th class="col-drag"></th>
         <th class="col-uhr">Uhr</th>
         <th class="col-dauer">Zeit</th>
-        <th v-for="spalte in spalten" :key="spalte.id" :style="{ width: spalte.width + '%' }">
+        <th v-for="spalte in spaltenMitBreite" :key="spalte.id" :style="{ width: spalte.breite + '%' }">
           {{ spalte.label }}
         </th>
         <th class="col-delete"></th>
@@ -76,10 +91,18 @@ watchEffect(() => {
             @mouseup.prevent
           />
         </td>
-        <td v-for="spalte in spalten" :key="spalte.id">
+        <td v-for="spalte in spalten" :key="spalte.id" :class="{ 'cell-textarea': spalte.type === 'textarea' }">
+          <textarea
+            v-if="spalte.type === 'textarea'"
+            class="cell-input"
+            :placeholder="spalte.label + ' ...'"
+            v-model="phase[spalte.id]"
+          ></textarea>
           <input
+            v-else
             type="text"
             class="cell-input"
+            :list="spalte.type === 'datalist' ? `${spalte.id}-liste` : null"
             :placeholder="spalte.label + ' ...'"
             v-model="phase[spalte.id]"
           />
@@ -96,6 +119,14 @@ watchEffect(() => {
       </tr>
     </tbody>
   </table>
+
+  <datalist
+    v-for="spalte in spalten.filter((s) => s.type === 'datalist')"
+    :key="spalte.id"
+    :id="`${spalte.id}-liste`"
+  >
+    <option v-for="option in spalte.options" :key="option" :value="option"></option>
+  </datalist>
 </template>
 
 <style scoped>
@@ -131,9 +162,7 @@ watchEffect(() => {
 
 /* ====== TABLE: CELL CONTENT & INPUTS ====== */
 
-.plan-table .cell-input,
-.plan-table .handlung-textarea,
-.plan-table .bemerkung-textarea {
+.plan-table .cell-input {
   width: 100%;
   background-color: var(--surface-color);
   border: 2px solid var(--border-color);
@@ -142,12 +171,20 @@ watchEffect(() => {
   margin: -0.25rem;
 }
 
-.plan-table .cell-input:focus,
-.plan-table .handlung-textarea:focus,
-.plan-table .bemerkung-textarea:focus {
+.plan-table .cell-input:focus {
   background-color: var(--bg-color);
   border-color: var(--accent-color);
   outline: none;
+}
+
+.plan-table td.cell-textarea {
+  /* Vertikale Ausrichtung für mehrzeilige Inhalte überschreiben */
+  vertical-align: top;
+  padding: 1em;
+}
+
+.plan-table td.cell-textarea .cell-input {
+  resize: vertical;
 }
 
 .dauer-input {
