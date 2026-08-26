@@ -1,0 +1,25 @@
+[
+    { "id": "phase", "label": "Phase", "width": 12, "type": "text" },
+    { "id": "handlung", "label": "Inhalt", "width": 35, "type": "textarea" },
+    {
+        "id": "methode",
+        "label": "Methode bzw. Sozialform",
+        "width": 20,
+        "type": "datalist",
+        "options": [
+            "Lehrervortrag",
+            "Stillarbeit",
+            "Partnerarbeit",
+            "Gruppenarbeit",
+            "Experiment",
+            "Präsentation"
+        ]
+    },
+    {
+        "id": "medien",
+        "label": "Medien",
+        "width": 12,
+        "type": "datalist",
+        "options": ["Arbeitsblatt", "Präsentation", "Beamer", "Smartphone", "Plickerskarten", "Tafel"]
+    }
+]
