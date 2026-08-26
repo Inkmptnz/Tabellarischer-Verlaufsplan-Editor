@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { Plus, Upload, Printer, Download, RotateCcw, Undo2 } from 'lucide-vue-next'
 
-defineProps({
+const props = defineProps({
   gesamtdauer: Number,
   verbleibendeZeit: Number,
   canUndo: Boolean,
@@ -20,9 +20,25 @@ const emit = defineEmits([
   'export-pdf',
   'export-json',
   'import-json',
+  'import-preset',
 ])
+const IMPORT_PRESET_OPTION = '__import-preset__'
 let pressTimer = null
 const isPressing = ref(false)
+
+function onPresetChange(event) {
+  const value = event.target.value
+  if (value === IMPORT_PRESET_OPTION) {
+    // Dropdown-Anzeige sofort zurücksetzen: die Option ist nur ein Auslöser
+    // für den Datei-Dialog, keine echte Auswahl. Bleibt sie hängen, falls
+    // der Import fehlschlägt oder abgebrochen wird, würde das Dropdown eine
+    // Auswahl zeigen, die nie wirksam wurde.
+    event.target.value = props.aktivesPresetName
+    emit('import-preset')
+    return
+  }
+  emit('update:aktivesPresetName', value)
+}
 
 function startPressTimer() {
   isPressing.value = true
@@ -109,11 +125,12 @@ function cancelPressTimer() {
           id="preset-select"
           class="preset-select"
           :value="aktivesPresetName"
-          @change="emit('update:aktivesPresetName', $event.target.value)"
+          @change="onPresetChange($event)"
         >
           <option v-for="preset in presets" :key="preset.name" :value="preset.name">
             {{ preset.name }}
           </option>
+          <option :value="IMPORT_PRESET_OPTION">Eigenes Preset importieren…</option>
         </select>
       </div>
       <div class="input-group">

@@ -17,7 +17,7 @@ export function useFileHandler() {
     URL.revokeObjectURL(url)
   }
 
-  function importDataFromJson() {
+  function waehleUndLeseJsonDatei() {
     return new Promise((resolve, reject) => {
       const input = document.createElement('input')
       input.type = 'file'
@@ -34,8 +34,8 @@ export function useFileHandler() {
 
         reader.onload = (e) => {
           try {
-            const parsedData = JSON.parse(e.target.result)
-            resolve(parsedData)
+            const data = JSON.parse(e.target.result)
+            resolve({ data, filename: file.name })
           } catch (error) {
             reject(error)
           }
@@ -52,9 +52,15 @@ export function useFileHandler() {
     })
   }
 
+  async function importDataFromJson() {
+    const result = await waehleUndLeseJsonDatei()
+    return result?.data ?? null
+  }
+
   return {
     exportDataAsJson,
     importDataFromJson,
+    waehleUndLeseJsonDatei,
     sanitizeFilename,
   }
 }

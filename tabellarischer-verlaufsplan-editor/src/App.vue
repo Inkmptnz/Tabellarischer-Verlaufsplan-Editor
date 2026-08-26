@@ -10,7 +10,8 @@ import ActionBar from './components/ActionBar.vue'
 import PlanTabelle from './components/PlanTabelle.vue'
 
 const { generatePdf } = usePdfExport()
-const { exportDataAsJson, importDataFromJson, sanitizeFilename } = useFileHandler()
+const { exportDataAsJson, importDataFromJson, waehleUndLeseJsonDatei, sanitizeFilename } =
+  useFileHandler()
 
 const schulname = ref('')
 const datum = ref(new Date().toISOString().slice(0, 10))
@@ -22,10 +23,10 @@ const lernziele = ref([])
 const gesamtdauer = ref(45)
 
 
-const { presets } = usePresets()
-const aktivesPresetName = ref(presets[0].name)
+const { presets, importPreset } = usePresets()
+const aktivesPresetName = ref(presets.value[0].name)
 const aktivesPreset = computed(
-  () => presets.find((preset) => preset.name === aktivesPresetName.value) || presets[0],
+  () => presets.value.find((preset) => preset.name === aktivesPresetName.value) || presets.value[0],
 )
 
 const phasen = ref([])
@@ -51,7 +52,7 @@ function loadState() {
       lernziele.value = parsedState.lernziele || []
       gesamtdauer.value = parsedState.gesamtdauer || 45
       phasen.value = parsedState.phasen || []
-      if (presets.some((preset) => preset.name === parsedState.aktivesPresetName)) {
+      if (presets.value.some((preset) => preset.name === parsedState.aktivesPresetName)) {
         aktivesPresetName.value = parsedState.aktivesPresetName
       }
     } catch (e) {
@@ -189,7 +190,7 @@ async function handleImportFromJson() {
       lernziele.value = importedData.lernziele || []
       gesamtdauer.value = importedData.gesamtdauer || 45
       phasen.value = importedData.phasen || []
-      if (presets.some((preset) => preset.name === importedData.aktivesPresetName)) {
+      if (presets.value.some((preset) => preset.name === importedData.aktivesPresetName)) {
         aktivesPresetName.value = importedData.aktivesPresetName
       }
     }
@@ -197,6 +198,20 @@ async function handleImportFromJson() {
     console.error('Fehler beim Importieren der Daten:', error)
     alert(
       'Fehler beim Importieren der Datei. Bitte stellen Sie sicher, dass es eine valide JSON-Datei ist.',
+    )
+  }
+}
+
+async function handleImportPreset() {
+  try {
+    const result = await waehleUndLeseJsonDatei()
+    if (!result) return
+    const preset = importPreset(result.data, result.filename)
+    aktivesPresetName.value = preset.name
+  } catch (error) {
+    console.error('Fehler beim Importieren des Presets:', error)
+    alert(
+      'Fehler beim Importieren des Presets. Bitte stelle sicher, dass es eine valide Preset-JSON-Datei ist (Array aus Spalten mit id und label).',
     )
   }
 }
@@ -229,6 +244,7 @@ async function handleImportFromJson() {
       @undo="undoDelete"
       @export-json="handleExportToJson"
       @import-json="handleImportFromJson"
+      @import-preset="handleImportPreset"
       @export-pdf="handlePdfExport"
       @reset-all-data="resetAllData"
     />
